@@ -1,0 +1,50 @@
+// Count the number of persons 
+from person
+| stats count = count()
+| limit 10
+
+// Beware of the LIMIT  
+from person
+| limit 10
+| stats count = count()
+
+// Split by country
+from person
+| stats count = count() by address.country
+| limit 10
+
+// And by city
+from person
+| stats count = count() by address.country, address.city
+| limit 10
+
+// Add the average number of children
+from person
+| stats count = count(), children = avg(children) by address.country, address.city
+| limit 10
+
+// Compute percentiles from the calculated field "age"
+from person
+| eval age = date_diff("years", dateOfBirth, now())
+| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99)
+| limit 10
+
+// By country now
+from person
+| eval age = date_diff("years", dateOfBirth, now())
+| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99) by address.country
+| limit 10
+
+// Sort by the country name in the reverse order
+from person
+| eval age = date_diff("years", dateOfBirth, now())
+| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99) by address.country
+| sort address.country desc
+| limit 10
+
+// Or by the P50 value
+from person
+| eval age = date_diff("years", dateOfBirth, now())
+| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99) by address.country
+| sort p50
+| limit 10
