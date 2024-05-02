@@ -1,0 +1,12 @@
+// By default when we open Kibana Discover ES|QL
+from person
+| limit 10
+
+// We can ask for the metadata
+from person metadata _index, _id, _version
+| limit 10
+
+// We can just keep some fields
+from person metadata _index, _id, _version
+| keep _id, name, gender, address.country, address.city
+| limit 10
