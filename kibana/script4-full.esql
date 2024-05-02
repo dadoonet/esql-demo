@@ -1,0 +1,88 @@
+// How old is the person?
+from person metadata _index, _id, _version
+| where gender == "male" and address.city in ("Cergy", "Nantes")
+| eval dtStart = date_parse("yyyy", "1970")
+| eval dtEnd = date_parse("yyyy", "1980")
+| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
+| eval age = date_diff("years", dateOfBirth, now())
+| keep _id, age, name, gender, address.country, address.city
+| limit 10
+
+// Let's look at a given person
+from person metadata _index, _id, _version
+| where gender == "male" and address.city in ("Cergy", "Nantes")
+| eval dtStart = date_parse("yyyy", "1970")
+| eval dtEnd = date_parse("yyyy", "1980")
+| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
+| eval age = date_diff("years", dateOfBirth, now())
+| where _id == "1"
+| keep _id, name
+| limit 10
+
+// In the Dev Console, run:
+GET info/_doc/1
+
+// After creating the enrich policy person-policy, we can complete 
+// our resultset with data coming from the other index
+from person metadata _index, _id, _version
+| where gender == "male" and address.city in ("Cergy", "Nantes")
+| eval dtStart = date_parse("yyyy", "1970")
+| eval dtEnd = date_parse("yyyy", "1980")
+| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
+| eval age = date_diff("years", dateOfBirth, now())
+| where _id == "1"
+| enrich person-policy on _id with height, weight
+| keep _id, name, height, weight
+| limit 10
+
+// We can filter on the generated field
+from person metadata _index, _id, _version
+| where gender == "male" and address.city in ("Cergy", "Nantes")
+| eval dtStart = date_parse("yyyy", "1970")
+| eval dtEnd = date_parse("yyyy", "1980")
+| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
+| eval age = date_diff("years", dateOfBirth, now())
+| enrich person-policy on _id with height, weight
+| where weight > 80
+| keep _id, name, height, weight
+| limit 10
+
+// Compute the BMI
+from person metadata _index, _id, _version
+| where gender == "male" and address.city in ("Cergy", "Nantes")
+| eval dtStart = date_parse("yyyy", "1970")
+| eval dtEnd = date_parse("yyyy", "1980")
+| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
+| eval age = date_diff("years", dateOfBirth, now())
+| enrich person-policy on _id with height, weight
+| where weight > 80
+| keep _id, name, height, weight
+| eval BMI = round(weight / pow(height, 2), 1)
+| limit 10
+
+// And then tell the user if it's healthy or not:
+from person metadata _index, _id, _version
+| where gender == "male" and address.city in ("Cergy", "Nantes")
+| eval dtStart = date_parse("yyyy", "1970")
+| eval dtEnd = date_parse("yyyy", "1980")
+| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
+| eval age = date_diff("years", dateOfBirth, now())
+| enrich person-policy on _id with height, weight
+| where weight > 80
+| keep _id, name, height, weight
+| eval BMI = round(weight / pow(height, 2), 1)
+| eval healthy = case(BMI < 18.5, false, BMI >= 25, false, true)
+| limit 10
+
+// Add sample data
+row a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
+
+// Dissect to structured data using dissect on the fly
+row a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
+| dissect a "%{date} - %{email} - %{ip} - %{number}"
+| keep date, email, ip, number
+
+// Or even more advanced with a Grok pattern
+row a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
+| grok a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number:int}"
+| keep date, email, ip, number
