@@ -1,0 +1,83 @@
+# Like a GET /
+POST _query
+{
+  "query": """
+    SHOW INFO
+  """
+}
+
+# You can add comments anywhere in the query
+POST _query
+{
+  "query": """
+    SHOW INFO // Comment
+  """
+}
+
+# The default output format is JSON
+POST _query?format=json
+{
+  "query": """
+    SHOW INFO
+  """
+}
+
+# You can also request CSV output
+POST _query?format=csv
+{
+  "query": """
+    SHOW INFO
+  """
+}
+
+# Or plain text
+POST _query?format=txt
+{
+  "query": """
+    SHOW INFO
+  """
+}
+
+# Remove the warning message
+POST _query?format=txt
+{
+  "query": """
+    SHOW INFO
+    | LIMIT 1
+  """
+}
+
+# Only keep the version field
+POST _query?format=txt
+{
+  "query": """
+    SHOW INFO
+    | LIMIT 1
+    | KEEP version
+  """
+}
+
+# You can choose where you'd like to put the PIPE symbol
+POST _query?format=txt
+{
+  "query": """
+    SHOW INFO | LIMIT 1 | KEEP version
+  """
+}
+POST _query?format=txt
+{
+  "query": """
+    SHOW INFO |
+    LIMIT 1 |
+    KEEP version
+  """
+}
+POST _query?format=txt
+{
+  "query": """
+    SHOW INFO
+    | LIMIT 1
+    | KEEP version
+  """
+}
+
