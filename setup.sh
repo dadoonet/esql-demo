@@ -66,7 +66,7 @@ echo Injecting person dataset
 injector/injector.sh
 
 echo Add David to the dataset
-curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/person" -u elastic:$ELASTIC_PASSWORD -H "Content-Type: application/json" -d'
+curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/person/_doc/1" -u elastic:$ELASTIC_PASSWORD -H "Content-Type: application/json" -d'
 {
   "name": "David Pilato",
   "dateOfBirth": "1971-12-26",
@@ -89,8 +89,8 @@ curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/person" -u elastic:$ELASTIC_PASSWORD
 }' ; echo
 
 echo "Add some data about persons"
-curl -XDELETE "$ELASTICSEARCH_URL/info" -u elastic:$ELASTIC_PASSWORD ; echo
-curl -XPUT "$ELASTICSEARCH_URL/info/_doc/1" -u elastic:$ELASTIC_PASSWORD -H "Content-Type: application/json" -d'
+curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/info" -u elastic:$ELASTIC_PASSWORD ; echo
+curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/info/_doc/1" -u elastic:$ELASTIC_PASSWORD -H "Content-Type: application/json" -d'
 {
   "id": "1",
   "height": 1.79,
