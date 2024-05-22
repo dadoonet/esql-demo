@@ -56,6 +56,9 @@ echo -ne '\n'
 echo Remove existing person data
 curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/person*" -u elastic:$ELASTIC_PASSWORD ; echo
 
+echo Remove existing person-policy enrich policy
+curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/_enrich/policy/person-policy" -u elastic:$ELASTIC_PASSWORD ; echo
+
 echo -ne '\n'
 echo "#############################"
 echo "### Inject Person Dataset ###"
