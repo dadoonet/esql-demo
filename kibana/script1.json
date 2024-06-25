@@ -1,6 +1,6 @@
 POST _query
 {
   "query": """
-    SHOW INFO
+    from person
   """
 }

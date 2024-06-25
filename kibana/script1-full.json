@@ -2,7 +2,7 @@
 POST _query
 {
   "query": """
-    SHOW INFO
+    from person
   """
 }
 
@@ -10,7 +10,7 @@ POST _query
 POST _query
 {
   "query": """
-    SHOW INFO // Comment
+    from person // Comment
   """
 }
 
@@ -18,7 +18,7 @@ POST _query
 POST _query?format=json
 {
   "query": """
-    SHOW INFO
+    from person
   """
 }
 
@@ -26,7 +26,7 @@ POST _query?format=json
 POST _query?format=csv
 {
   "query": """
-    SHOW INFO
+    from person
   """
 }
 
@@ -34,7 +34,7 @@ POST _query?format=csv
 POST _query?format=txt
 {
   "query": """
-    SHOW INFO
+    from person
   """
 }
 
@@ -42,18 +42,18 @@ POST _query?format=txt
 POST _query?format=txt
 {
   "query": """
-    SHOW INFO
-    | LIMIT 1
+    from person
+    | limit 1
   """
 }
 
-# Only keep the version field
+# Only keep some fields
 POST _query?format=txt
 {
   "query": """
-    SHOW INFO
-    | LIMIT 1
-    | KEEP version
+    from person
+    | limit 1
+    | keep name, address.city
   """
 }
 
@@ -61,23 +61,23 @@ POST _query?format=txt
 POST _query?format=txt
 {
   "query": """
-    SHOW INFO | LIMIT 1 | KEEP version
+    from person | limit 1 | keep name, address.city
   """
 }
 POST _query?format=txt
 {
   "query": """
-    SHOW INFO |
-    LIMIT 1 |
-    KEEP version
+    from person |
+    limit 1 |
+    keep name, address.city
   """
 }
 POST _query?format=txt
 {
   "query": """
-    SHOW INFO
-    | LIMIT 1
-    | KEEP version
+    from person
+    | limit 1
+    | keep name, address.city
   """
 }
 
