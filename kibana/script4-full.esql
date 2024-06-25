@@ -4,7 +4,7 @@ from person metadata _index, _id, _version
 | eval dtStart = date_parse("yyyy", "1970")
 | eval dtEnd = date_parse("yyyy", "1980")
 | where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| eval age = date_diff("years", dateOfBirth, now())
+| eval age = date_diff("year", dateOfBirth, now())
 | keep _id, age, name, gender, address.country, address.city
 | limit 10
 
@@ -14,7 +14,7 @@ from person metadata _index, _id, _version
 | eval dtStart = date_parse("yyyy", "1970")
 | eval dtEnd = date_parse("yyyy", "1980")
 | where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| eval age = date_diff("years", dateOfBirth, now())
+| eval age = date_diff("year", dateOfBirth, now())
 | where _id == "1"
 | keep _id, name
 | limit 10
@@ -29,7 +29,7 @@ from person metadata _index, _id, _version
 | eval dtStart = date_parse("yyyy", "1970")
 | eval dtEnd = date_parse("yyyy", "1980")
 | where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| eval age = date_diff("years", dateOfBirth, now())
+| eval age = date_diff("year", dateOfBirth, now())
 | where _id == "1"
 | enrich person-policy on _id with height, weight
 | keep _id, name, height, weight
@@ -41,7 +41,7 @@ from person metadata _index, _id, _version
 | eval dtStart = date_parse("yyyy", "1970")
 | eval dtEnd = date_parse("yyyy", "1980")
 | where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| eval age = date_diff("years", dateOfBirth, now())
+| eval age = date_diff("year", dateOfBirth, now())
 | enrich person-policy on _id with height, weight
 | where weight > 80
 | keep _id, name, height, weight
@@ -53,7 +53,7 @@ from person metadata _index, _id, _version
 | eval dtStart = date_parse("yyyy", "1970")
 | eval dtEnd = date_parse("yyyy", "1980")
 | where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| eval age = date_diff("years", dateOfBirth, now())
+| eval age = date_diff("year", dateOfBirth, now())
 | enrich person-policy on _id with height, weight
 | where weight > 80
 | keep _id, name, height, weight
@@ -66,7 +66,7 @@ from person metadata _index, _id, _version
 | eval dtStart = date_parse("yyyy", "1970")
 | eval dtEnd = date_parse("yyyy", "1980")
 | where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| eval age = date_diff("years", dateOfBirth, now())
+| eval age = date_diff("year", dateOfBirth, now())
 | enrich person-policy on _id with height, weight
 | where weight > 80
 | keep _id, name, height, weight
