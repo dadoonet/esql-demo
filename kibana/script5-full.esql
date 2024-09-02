@@ -1,50 +1,58 @@
-// Count the number of persons 
-from person
-| stats count = count()
-| limit 10
+// Let's look at a given person
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
+| WHERE age > 50 AND _id == "1"
+| KEEP _id, name
+| LIMIT 10
 
-// Beware of the LIMIT  
-from person
-| limit 10
-| stats count = count()
+// In the Dev Console, run:
+GET info/_doc/1
 
-// Split by country
-from person
-| stats count = count() by address.country
-| limit 10
+// After creating the enrich policy person-policy, we can complete 
+// our resultset with data coming FROM the other index
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
+| WHERE age > 50 AND _id == "1"
+| ENRICH person-policy ON _id with height, weight
+| KEEP _id, name, height, weight
+| LIMIT 10
 
-// And by city
-from person
-| stats count = count() by address.country, address.city
-| limit 10
+// We can filter on the generated field
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
+| WHERE age > 50
+| ENRICH person-policy ON _id with height, weight
+| WHERE weight > 80
+| KEEP _id, name, height, weight
+| LIMIT 10
 
-// Add the average number of children
-from person
-| stats count = count(), children = avg(children) by address.country, address.city
-| limit 10
+// Compute the BMI
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
+| WHERE age > 50
+| ENRICH person-policy ON _id with height, weight
+| WHERE weight > 80
+| KEEP _id, name, height, weight
+| EVAL BMI=ROUND(weight / POW(height, 2), 1)
+| LIMIT 10
 
-// Compute percentiles from the calculated field "age"
-from person
-| eval age = date_diff("years", dateOfBirth, now())
-| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99)
-| limit 10
-
-// By country now
-from person
-| eval age = date_diff("years", dateOfBirth, now())
-| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99) by address.country
-| limit 10
-
-// Sort by the country name in the reverse order
-from person
-| eval age = date_diff("years", dateOfBirth, now())
-| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99) by address.country
-| sort address.country desc
-| limit 10
-
-// Or by the P50 value
-from person
-| eval age = date_diff("years", dateOfBirth, now())
-| stats p0 = percentile(age, 0), p50 = percentile(age, 50), p99 = percentile(age, 99) by address.country
-| sort p50
-| limit 10
+// And then tell the user if it's healthy or not:
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
+| WHERE age > 50
+| ENRICH person-policy ON _id with height, weight
+| WHERE weight > 80
+| KEEP _id, name, height, weight
+| EVAL BMI=ROUND(weight / POW(height, 2), 1)
+| EVAL healthy=CASE(BMI < 18.5, false, BMI >= 25, false, true)
+| LIMIT 10

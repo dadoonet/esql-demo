@@ -2,15 +2,15 @@
 POST _query
 {
   "query": """
-    from person
+    FROM person
   """
 }
 
-# You can add comments anywhere in the query
+# You can add comments anyWHERE in the query
 POST _query
 {
   "query": """
-    from person // Comment
+    FROM person // Comment
   """
 }
 
@@ -18,7 +18,7 @@ POST _query
 POST _query?format=json
 {
   "query": """
-    from person
+    FROM person
   """
 }
 
@@ -26,7 +26,7 @@ POST _query?format=json
 POST _query?format=csv
 {
   "query": """
-    from person
+    FROM person
   """
 }
 
@@ -34,7 +34,7 @@ POST _query?format=csv
 POST _query?format=txt
 {
   "query": """
-    from person
+    FROM person
   """
 }
 
@@ -42,42 +42,42 @@ POST _query?format=txt
 POST _query?format=txt
 {
   "query": """
-    from person
-    | limit 1
+    FROM person
+    | LIMIT 1
   """
 }
 
-# Only keep some fields
+# Only KEEP some fields
 POST _query?format=txt
 {
   "query": """
-    from person
-    | limit 1
-    | keep name, address.city
+    FROM person
+    | LIMIT 1
+    | KEEP name, address.city
   """
 }
 
-# You can choose where you'd like to put the PIPE symbol
+# You can choose WHERE you'd like to put the PIPE symbol
 POST _query?format=txt
 {
   "query": """
-    from person | limit 1 | keep name, address.city
+    FROM person | LIMIT 1 | KEEP name, address.city
   """
 }
 POST _query?format=txt
 {
   "query": """
-    from person |
-    limit 1 |
-    keep name, address.city
+    FROM person |
+    LIMIT 1 |
+    KEEP name, address.city
   """
 }
 POST _query?format=txt
 {
   "query": """
-    from person
-    | limit 1
-    | keep name, address.city
+    FROM person
+    | LIMIT 1
+    | KEEP name, address.city
   """
 }
 

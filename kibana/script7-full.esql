@@ -1,0 +1,50 @@
+// Count the number of persons 
+FROM person
+| STATS count = COUNT()
+| LIMIT 10
+
+// Beware of the LIMIT  
+FROM person
+| LIMIT 10
+| STATS count = COUNT()
+
+// Split by country
+FROM person
+| STATS count = COUNT() BY address.country
+| LIMIT 10
+
+// And by city
+FROM person
+| STATS count = COUNT() BY address.country, address.city
+| LIMIT 10
+
+// Add the average number of children
+FROM person
+| STATS count = COUNT(), children = AVG(children) BY address.country, address.city
+| LIMIT 10
+
+// Compute percentiles from the calculated field "age"
+FROM person
+| EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
+| STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99)
+| LIMIT 10
+
+// By country now
+FROM person
+| EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
+| STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99) BY address.country
+| LIMIT 10
+
+// Sort by the country name in the reverse order
+FROM person
+| EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
+| STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99) BY address.country
+| SORT address.country DESC
+| LIMIT 10
+
+// Or by the P50 value
+FROM person
+| EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
+| STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99) BY address.country
+| SORT p50
+| LIMIT 10

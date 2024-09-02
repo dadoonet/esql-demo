@@ -1,6 +1,6 @@
 POST _query
 {
   "query": """
-    from person
+    FROM person
   """
 }

@@ -1,27 +1,25 @@
 // select on gender
-from person metadata _index, _id, _version
-| where gender == "male"
-| keep _id, name, gender, address.country, address.city
-| limit 10
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male"
+| KEEP _id, name, gender, address.country, address.city
+| LIMIT 10
 
 // Also restrict on 2 cities
-from person metadata _index, _id, _version
-| where gender == "male" and address.city in ("Cergy", "Nantes")
-| keep _id, name, gender, address.country, address.city
-| limit 10
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| KEEP _id, name, gender, address.country, address.city
+| LIMIT 10
 
 // Filter on date objects can not work as is
-from person metadata _index, _id, _version
-| where gender == "male" and address.city in ("Cergy", "Nantes")
-| where dateOfBirth > 1970 
-| keep _id, name, gender, address.country, address.city
-| limit 10
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= 1970 
+| KEEP _id, name, gender, address.country, address.city
+| LIMIT 10
 
-// create a start and end date objects and filter on dateOfBirth using them
-from person metadata _index, _id, _version
-| where gender == "male" and address.city in ("Cergy", "Nantes")
-| eval dtStart = date_parse("yyyy", "1970")
-| eval dtEnd = date_parse("yyyy", "1980")
-| where dateOfBirth >= dtStart and dateOfBirth < dtEnd
-| keep _id, dateOfBirth, name, gender, address.country, address.city
-| limit 10
+// create a start AND end date objects AND filter on dateOfBirth using them
+FROM person METADATA _index, _id, _version
+| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| KEEP _id, dateOfBirth, name, gender, address.country, address.city
+| LIMIT 10
