@@ -17,7 +17,7 @@ FROM person METADATA _index, _id, _version
 | KEEP _id, name, gender, address.country, address.city
 | LIMIT 10
 
-// create a start AND end date objects AND filter on dateOfBirth using them
+// filter on dateOfBirth using date objects
 FROM person METADATA _index, _id, _version
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
