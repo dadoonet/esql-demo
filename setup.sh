@@ -109,3 +109,4 @@ echo '\n'
 
 open "$KIBANA_URL/app/dev_tools#/console"
 open "$KIBANA_URL/app/management/data/index_management/enrich_policies"
+open "$KIBANA_URL/app/dev_tools#/console"
