@@ -3,15 +3,15 @@ ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
 
 // Dissect to structured data using dissect on the fly
 ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
-| dissect a "%{date} - %{email} - %{ip} - %{number}"
+| DISSECT a "%{date} - %{email} - %{ip} - %{number}"
 | KEEP date, email, ip, number
 
 // Or even more advanced with a Grok pattern
 ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
-| grok a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number}"
+| GROK a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number}"
 | KEEP date, email, ip, number
 
 // "number" should be treated as an int, so a real number instead of a keyword field
 ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
-| grok a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number:int}"
+| GROK a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number:int}"
 | KEEP date, email, ip, number
