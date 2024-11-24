@@ -18,33 +18,38 @@ FROM person
 | STATS count = COUNT() BY address.country, address.city
 | LIMIT 10
 
+// The LIMIT is too low. We need to get all the agg results.
+FROM person
+| STATS count = COUNT() BY address.country, address.city
+| LIMIT 50
+
 // Add the average number of children
 FROM person
 | STATS count = COUNT(), children = AVG(children) BY address.country, address.city
-| LIMIT 10
+| LIMIT 50
 
 // Compute percentiles from the calculated field "age"
 FROM person
 | EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
 | STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99)
-| LIMIT 10
+| LIMIT 50
 
 // By country now
 FROM person
 | EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
 | STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99) BY address.country
-| LIMIT 10
+| LIMIT 50
 
 // Sort by the country name in the reverse order
 FROM person
 | EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
 | STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99) BY address.country
 | SORT address.country DESC
-| LIMIT 10
+| LIMIT 50
 
 // Or by the P50 value
 FROM person
 | EVAL age = DATE_DIFF("years", dateOfBirth, NOW())
 | STATS p0 = PERCENTILE(age, 0), p50 = PERCENTILE(age, 50), p99 = PERCENTILE(age, 99) BY address.country
 | SORT p50
-| LIMIT 10
+| LIMIT 50
