@@ -1,9 +1,10 @@
 // Let's look at a given person
 FROM person METADATA _index, _id, _version
+| WHERE name:"pilato"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
-| WHERE age > 50 AND _id == "1"
+| WHERE age > 50
 | KEEP _id, name
 | LIMIT 10
 
@@ -13,16 +14,18 @@ GET info/_doc/1
 // After creating the enrich policy person-policy, we can complete 
 // our resultset with data coming FROM the other index
 FROM person METADATA _index, _id, _version
+| WHERE name:"pilato"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
-| WHERE age > 50 AND _id == "1"
+| WHERE age > 50
 | ENRICH person-policy ON _id with height, weight
 | KEEP _id, name, height, weight
 | LIMIT 10
 
 // We can filter on the generated field
 FROM person METADATA _index, _id, _version
+| WHERE name:"pilato"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
@@ -34,6 +37,7 @@ FROM person METADATA _index, _id, _version
 
 // Compute the BMI
 FROM person METADATA _index, _id, _version
+| WHERE name:"pilato"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
@@ -46,6 +50,7 @@ FROM person METADATA _index, _id, _version
 
 // And then tell the user if it's healthy or not:
 FROM person METADATA _index, _id, _version
+| WHERE name:"pilato"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())

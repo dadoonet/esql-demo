@@ -1,5 +1,6 @@
 // How old is the person?
 FROM person METADATA _index, _id, _version
+| WHERE name:"david"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
@@ -8,6 +9,7 @@ FROM person METADATA _index, _id, _version
 
 // Filter persons more than 50yo
 FROM person METADATA _index, _id, _version
+| WHERE name:"david"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())

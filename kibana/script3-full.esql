@@ -1,17 +1,26 @@
-// select on gender
+// Select on name using full text search (from 8.17)
 FROM person METADATA _index, _id, _version
+| WHERE name:"david"
+| KEEP _id, name, gender, address.country, address.city
+| LIMIT 10
+
+// Select also on gender
+FROM person METADATA _index, _id, _version
+| WHERE name:"david"
 | WHERE gender == "male"
 | KEEP _id, name, gender, address.country, address.city
 | LIMIT 10
 
 // Also restrict on 2 cities
 FROM person METADATA _index, _id, _version
+| WHERE name:"david"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | KEEP _id, name, gender, address.country, address.city
 | LIMIT 10
 
 // Filter on date objects can not work as is
 FROM person METADATA _index, _id, _version
+| WHERE name:"david"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= 1970 
 | KEEP _id, name, gender, address.country, address.city
@@ -19,6 +28,7 @@ FROM person METADATA _index, _id, _version
 
 // filter on dateOfBirth using date objects
 FROM person METADATA _index, _id, _version
+| WHERE name:"david"
 | WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | KEEP _id, dateOfBirth, name, gender, address.country, address.city
