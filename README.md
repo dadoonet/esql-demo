@@ -5,7 +5,7 @@ Elasticsearch and Kibana added a brand new query language: ES|QL — coming with
 
 ## Setup
 
-### Run Locally (recommended)
+### Run locally
 
 Run Elastic Stack:
 
@@ -22,12 +22,19 @@ And run:
 
 ### Run on cloud
 
-If you are running a cluster on [elastic cloud](https://cloud.elastic.co),
+If you are running a cluster or a serverless project on [elastic cloud](https://cloud.elastic.co),
 you need to create a `.cloud` local file which contains:
 
 ```properties
-CLOUD_ID=the_cloud_id_you_can_read_from_cloud_console
-CLOUD_PASSWORD=the_generated_elastic_password
+ELASTICSEARCH_URL=<the elasticsearch url you can read from the cloud console>
+KIBANA_URL=<just replace es by kb in the ELASTICSEARCH_URL>
+API_KEY=<the generated api key>
+```
+
+To get an API Key, just open Kibana with the following URL:
+
+```sh
+source .cloud ; open $KIBANA_URL/app/management/security/api_keys
 ```
 
 Run:

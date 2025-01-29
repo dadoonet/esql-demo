@@ -1,0 +1,20 @@
+{
+  "name": "David Pilato",
+  "dateOfBirth": "1971-12-26",
+  "gender": "male",
+  "children": 3,
+  "marketing": {
+    "cars": 10,
+    "music": 876
+  },
+  "address": {
+    "country": "France",
+    "zipcode": "95800",
+    "city": "Cergy",
+    "countrycode": "FR",
+    "location": {
+      "lon": 2.0173375,
+      "lat": 49.040818
+    }
+  }
+}

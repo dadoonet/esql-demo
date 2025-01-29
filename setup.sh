@@ -10,7 +10,7 @@ check_service () {
 	echo "$1 $STACK_VERSION must be available on $2"
 	echo "⏳ Waiting for $1"
 
-	until curl $CURL_OPTION -u elastic:$ELASTIC_PASSWORD -s "$2" | grep "$3" > /dev/null; do
+	until eval curl $CURL_OPTION -s "$2" | grep "$3" > /dev/null; do
 		  sleep 1
 			echo '.'
 	done
@@ -26,13 +26,18 @@ echo "##################"
 echo "### Pre-checks ###"
 echo "##################"
 
-if [ -z "$CLOUD_ID" ] ; then
+if [ -z "$API_KEY" ] ; then
 	echo "We are running a local demo. If you did not start Elastic yet, please run:"
 	echo "docker-compose up"
 fi
 
-check_service "Elasticsearch" "$ELASTICSEARCH_URL" "\"number\" : \"$STACK_VERSION\""
-check_service "Kibana" "$KIBANA_URL/app/home#/" "<title>Elastic</title>"
+if [ -z "$API_KEY" ] ; then
+  check_service "Elasticsearch" "$ELASTICSEARCH_URL" "\"number\" : \"$STACK_VERSION\""
+  check_service "Kibana" "$KIBANA_URL/app/home#/" "<title>Elastic</title>"
+else
+  check_service "Elasticsearch" "$ELASTICSEARCH_URL" "\"tagline\""
+  check_service "Kibana" "$KIBANA_URL/app/home#/" "<title>Elastic</title>"
+fi
 
 echo '\n'
 echo "###############################"
@@ -54,10 +59,10 @@ echo "################################"
 echo '\n'
 
 echo "Remove existing person data"
-curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/person*" -u elastic:$ELASTIC_PASSWORD ; echo
+eval curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/person" ; echo
 
 echo "Remove existing person-policy enrich policy"
-curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/_enrich/policy/person-policy" -u elastic:$ELASTIC_PASSWORD ; echo
+eval curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/_enrich/policy/person-policy" ; echo
 
 echo '\n'
 echo "#############################"
@@ -69,36 +74,11 @@ echo "Injecting person dataset"
 injector/injector.sh
 
 echo "Add David to the dataset"
-curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/person/_doc/1" -u elastic:$ELASTIC_PASSWORD -H "Content-Type: application/json" -d'
-{
-  "name": "David Pilato",
-  "dateOfBirth": "1971-12-26",
-  "gender": "male",
-  "children": 3,
-  "marketing": {
-    "cars": 10,
-    "music": 876
-  },
-  "address": {
-    "country": "France",
-    "zipcode": "95800",
-    "city": "Cergy",
-    "countrycode": "FR",
-    "location": {
-      "lon": 2.0173375,
-      "lat": 49.040818
-    }
-  }
-}' ; echo
+eval curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/person/_doc/1" --data-binary "@elasticsearch/david.json" ; echo
 
 echo "Add some data about persons"
-curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/info" -u elastic:$ELASTIC_PASSWORD ; echo
-curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/info/_doc/1" -u elastic:$ELASTIC_PASSWORD -H "Content-Type: application/json" -d'
-{
-  "id": "1",
-  "height": 1.79,
-  "weight": 91
-}'; echo
+eval curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/info" ; echo
+eval curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/info/_doc/1" --data-binary "@elasticsearch/info.json"; echo
 
 
 echo '\n'
