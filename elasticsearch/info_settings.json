@@ -1,0 +1,20 @@
+{
+  "settings": {
+    "index": {
+      "mode": "lookup"
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "height": {
+        "type": "float"
+      },
+      "weight": {
+        "type": "float"
+      }
+    }
+  }
+}

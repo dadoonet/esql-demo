@@ -61,9 +61,6 @@ echo '\n'
 echo "Remove existing person data"
 eval curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/person" ; echo
 
-echo "Remove existing person-policy enrich policy"
-eval curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/_enrich/policy/person-policy" ; echo
-
 echo '\n'
 echo "#############################"
 echo "### Inject Person Dataset ###"
@@ -78,6 +75,7 @@ eval curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/person/_doc/1" --data-binary "@
 
 echo "Add some data about persons"
 eval curl $CURL_OPTION -XDELETE "$ELASTICSEARCH_URL/info" ; echo
+eval curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/info" --data-binary "@elasticsearch/info_settings.json"; echo
 eval curl $CURL_OPTION -XPUT "$ELASTICSEARCH_URL/info/_doc/1" --data-binary "@elasticsearch/info.json"; echo
 
 
@@ -87,6 +85,4 @@ echo "### ✅ Demo is ready ###"
 echo "########################"
 echo '\n'
 
-open "$KIBANA_URL/app/dev_tools#/console"
-open "$KIBANA_URL/app/management/data/index_management/enrich_policies"
 open "$KIBANA_URL/app/dev_tools#/console"

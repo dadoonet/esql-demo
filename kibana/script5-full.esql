@@ -1,63 +1,72 @@
-// Let's look at a given person
-FROM person METADATA _index, _id, _version
-| WHERE name:"pilato"
-| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
-| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
-| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
-| WHERE age > 50
-| KEEP _id, name
-| LIMIT 10
-
 // In the Dev Console, run:
-GET info/_doc/1
+// The index has been defined with the "index.mode":"lookup" setting.
+GET info
+GET info/_search
 
-// After creating the enrich policy person-policy, we can complete 
-// our resultset with data coming FROM the other index
+// To do lookups, we need to have the same field name on both sides, here id.
 FROM person METADATA _index, _id, _version
-| WHERE name:"pilato"
-| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE name:"david" AND gender == "male" and address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
 | WHERE age > 50
-| ENRICH person-policy ON _id with height, weight
-| KEEP _id, name, height, weight
+| EVAL id = _id
+| KEEP id, name
 | LIMIT 10
 
-// We can filter on the generated field
+// We can complete our resultset with data coming FROM the other index
 FROM person METADATA _index, _id, _version
-| WHERE name:"pilato"
-| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE name:"david" AND gender == "male" and address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
 | WHERE age > 50
-| ENRICH person-policy ON _id with height, weight
-| WHERE weight > 80
-| KEEP _id, name, height, weight
+| EVAL id = _id
+| LOOKUP JOIN info ON id
+| KEEP id, name, weight, height
+| LIMIT 10
+
+// We can filter on the other index
+FROM person METADATA _index, _id, _version
+| WHERE name:"david" AND gender == "male" and address.city IN ("Cergy", "Nantes")
+| WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
+| EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
+| WHERE age > 50
+| EVAL id = _id
+| LOOKUP JOIN info ON id
+| WHERE weight > 70
+| KEEP id, name, weight, height
 | LIMIT 10
 
 // Compute the BMI
 FROM person METADATA _index, _id, _version
-| WHERE name:"pilato"
-| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE name:"david" AND gender == "male" and address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
 | WHERE age > 50
-| ENRICH person-policy ON _id with height, weight
-| WHERE weight > 80
-| KEEP _id, name, height, weight
+| EVAL id = _id
+| LOOKUP JOIN info ON id
+| WHERE weight > 70
+| KEEP id, name, weight, height
 | EVAL BMI=ROUND(weight / POW(height, 2), 1)
 | LIMIT 10
 
 // And then tell the user if it's healthy or not:
 FROM person METADATA _index, _id, _version
-| WHERE name:"pilato"
-| WHERE gender == "male" AND address.city IN ("Cergy", "Nantes")
+| WHERE name:"david" AND gender == "male" and address.city IN ("Cergy", "Nantes")
 | WHERE dateOfBirth >= DATE_PARSE("yyyy", "1970") AND dateOfBirth < DATE_PARSE("yyyy", "1980")
 | EVAL age = DATE_DIFF("year", dateOfBirth, NOW())
 | WHERE age > 50
-| ENRICH person-policy ON _id with height, weight
-| WHERE weight > 80
-| KEEP _id, name, height, weight
+| EVAL id = _id
+| LOOKUP JOIN info ON id
+| WHERE weight > 70
+| KEEP id, name, weight, height
 | EVAL BMI=ROUND(weight / POW(height, 2), 1)
 | EVAL healthy=CASE(BMI < 18.5, false, BMI >= 25, false, true)
 | LIMIT 10
+
+// Update the document 1 in info index then run again the previous query
+PUT info/_doc/1
+{
+  "id": "1",
+  "height": 1.79,
+  "weight": 79
+}

@@ -15,3 +15,9 @@ ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
 ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
 | GROK a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number:int}"
 | KEEP date, email, ip, number
+
+// It means that you can use the number for selection or computation
+ROW a = "2023-01-23T12:15:00.000Z - some.email@foo.com - 127.0.0.1 - 42"
+| GROK a "%{TIMESTAMP_ISO8601:date} - %{EMAILADDRESS:email} - %{IP:ip} - %{NUMBER:number:int}"
+| KEEP date, email, ip, number
+| WHERE number > 40
